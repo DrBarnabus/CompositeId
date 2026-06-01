@@ -23,8 +23,15 @@ public abstract class CompositeKeyAnalyzerTestBase<TAnalyzer> : CSharpAnalyzerTe
         // Set default language version to C# 12
         TestState.AdditionalFiles.Add(("Directory.Build.props", CreateDirectoryBuildProps()));
 
-        // Set ReferenceAssemblies to prevent assembly version conflicts
-        ReferenceAssemblies = ReferenceAssemblies.Net.Net80;
+        // Match reference assemblies to the running TFM; the loaded CompositeKey may be built for it.
+        ReferenceAssemblies =
+#if NET10_0_OR_GREATER
+            ReferenceAssemblies.Net.Net100;
+#elif NET9_0
+            ReferenceAssemblies.Net.Net90;
+#else
+            ReferenceAssemblies.Net.Net80;
+#endif
     }
 
     /// <summary>
